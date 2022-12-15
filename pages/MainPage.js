@@ -1,27 +1,31 @@
-import React, {useEffect, useState, Modal} from 'react';
-import {Header, Button, View, FlatList} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, View, FlatList, Text} from 'react-native';
+import {Header} from 'react-native-elements';
 import {Loader} from '../components/Loader.js';
 import Snackbar from 'react-native-snackbar';
+import {CustomButton} from '../components/CustomButton.js';
+import Modal from 'react-native-modal';
 
-export const MainPage = ({navigation}) => {
+export const MainPage: React.FC = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);
   const [comments, setComments] = useState([]);
   const [open, setOpen] = useState(false);
 
-  const handleOpen = () => {
+  const handleOpen = choosenId => {
     setOpen(true);
     setIsLoading(true);
     const getCommentsFromApi = async () => {
-      let response = await fetch('https://jsonplaceholder.typicode.com/posts/');
-      let json = await response.json();
+      const response = await fetch(
+        `https://jsonplaceholder.typicode.com/posts/${choosenId}/comments`,
+      );
+      const json = await response.json();
       setIsLoading(false);
       setComments(json);
-      return json;
     };
 
     try {
-      getCommentsFromApi;
+      getCommentsFromApi();
     } catch (error) {
       Snackbar.show({
         text: 'Сталась помилка',
@@ -30,32 +34,34 @@ export const MainPage = ({navigation}) => {
   };
 
   const handleLogin = () => {
-    navigation.navigate('LoginPage');
+    navigation.goBack();
   };
 
-  useEffect(() => {
-    const getArticlesFromApi = async () => {
-      let response = await fetch('https://jsonplaceholder.typicode.com/posts/');
-      let json = await response.json();
+  const getArticlesFromApi = async () => {
+    try {
+      const response = await fetch(
+        'https://jsonplaceholder.typicode.com/posts/',
+      );
+      const json = await response.json();
       setIsLoading(false);
       setData(json);
-      return json;
-    };
-
-    try {
-      getArticlesFromApi;
-    } catch (error) {
+    } catch {
       Snackbar.show({
         text: 'Сталась помилка',
         action: {
           text: 'Повторити запит',
           textColor: 'green',
           onPress: () => {
-            getArticlesFromApi;
+            getArticlesFromApi();
           },
         },
       });
     }
+  };
+
+  useEffect(() => {
+    getArticlesFromApi();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -64,40 +70,73 @@ export const MainPage = ({navigation}) => {
         <Loader />
       ) : (
         <View>
-          <Header>
-            <Button title="Log Out" onPress={handleLogin} />
-          </Header>
+          <Header
+            placement="left"
+            rightComponent={
+              <CustomButton title="Log Out" onPress={handleLogin} />
+            }
+          />
           <View>
-            {data.map(item => (
-              <View>
-                <FlatList
-                  title={item.title}
-                  subtitle={item.body}
-                  onClick={handleOpen}
-                />
-                <Modal
-                  visible={open}
-                  onRequestClose={() => {
-                    setOpen(false);
-                  }}>
-                  {isLoading ? (
-                    <Loader />
-                  ) : (
-                    <FlatList
-                      title={
-                        comments.find(com => item.id === com.postsId).title
-                      }
-                      subtitle={
-                        comments.find(com => item.id === com.postsId).body
-                      }
-                    />
-                  )}
-                </Modal>
-              </View>
-            ))}
+            <FlatList
+              data={data}
+              renderItem={({item}) => {
+                return (
+                  <View style={styles.containerItemList}>
+                    <Text
+                      style={styles.listItem}
+                      onPress={() => {
+                        handleOpen(item.id);
+                      }}>
+                      {item.title}
+                    </Text>
+                    <Text>{item.body}</Text>
+                  </View>
+                );
+              }}
+            />
           </View>
         </View>
       )}
+      <Modal
+        visible={open}
+        style={{width: '100%', height: '100%', backgroundColor: 'blue'}}
+        onRequestClose={() => {
+          setOpen(false);
+        }}>
+        <View>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <FlatList
+              data={comments}
+              renderItem={comment => {
+                console.log(comment.item.body);
+                return (
+                  <View>
+                    <Text>{comment.item.email}</Text>
+                    <Text>{comment.item.body}</Text>
+                  </View>
+                );
+              }}
+            />
+          )}
+        </View>
+      </Modal>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  listItem: {
+    fontSize: 20,
+    backgroundColor: 'green',
+  },
+
+  containerItemList: {
+    height: 120,
+    marginBottom: 30,
+    borderColor: 'black',
+    borderRadius: 2,
+    borderWidth: 1,
+  },
+});

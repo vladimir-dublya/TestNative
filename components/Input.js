@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, TextInput, StyleSheet} from 'react-native';
 
-const Input = ({
+export const Input = ({
   label,
   iconName,
   error,
@@ -38,8 +38,6 @@ const Input = ({
     </View>
   );
 };
-
-export default Input;
 
 const style = StyleSheet.create({
   label: {

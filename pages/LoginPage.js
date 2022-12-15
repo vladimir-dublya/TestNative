@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, SafeAreaView} from 'react-native';
-import Input from '../components/Input.js';
-import Button from '../components/button.js';
+import {Input} from '../components/Input.js';
+import {CustomButton} from '../components/CustomButton.js';
 
 export const LoginPage = ({navigation}) => {
   const [inputs, setInputs] = useState({
@@ -65,7 +65,7 @@ export const LoginPage = ({navigation}) => {
             onFocus={() => handleError(null, 'password')}
           />
         </View>
-        <Button title="Login" onPress={validate} />
+        <CustomButton title="Login" onPress={validate} />
       </ScrollView>
     </SafeAreaView>
   );
