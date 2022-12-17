@@ -54,6 +54,10 @@ export const styles = StyleSheet.create({
     backgroundColor: '#B25FB4',
   },
 
+  noConnection: {
+    fontSize: 30,
+  },
+
   containerItemList: {
     height: 120,
     marginBottom: 30,

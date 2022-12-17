@@ -11,6 +11,8 @@ import Snackbar from 'react-native-snackbar';
 import {LoginButton} from '../components/LoginButton.js';
 import {styles} from '../styles/styles.js';
 import Modal from 'react-native-modal';
+import NetInfo from '@react-native-community/netinfo';
+import {Data, Comments} from '../types/mainPage.ts';
 
 export const MainPage: React.FC = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -18,6 +20,11 @@ export const MainPage: React.FC = ({navigation}) => {
   const [data, setData] = useState([]);
   const [comments, setComments] = useState([]);
   const [open, setOpen] = useState(false);
+  const [isConnected, setIsConnected] = useState(true);
+
+  NetInfo.fetch().then(state => {
+    setIsConnected(state.isConnected);
+  });
 
   const handleOpen = choosenId => {
     setOpen(true);
@@ -79,6 +86,9 @@ export const MainPage: React.FC = ({navigation}) => {
 
   return (
     <View>
+      {!isConnected && (
+        <Text style={styles.noConnection}>Не має інтернет з'єднання</Text>
+      )}
       {isLoading ? (
         <Loader />
       ) : (

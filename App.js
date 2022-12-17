@@ -19,7 +19,7 @@ const App: () => Node = () => {
           options={{
             title: 'MainPage',
             headerStyle: {
-              backgroundColor: '#B25FB4',
+              backgroundColor: '#794F9C',
             },
           }}
         />
