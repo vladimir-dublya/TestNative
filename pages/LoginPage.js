@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View, ScrollView, SafeAreaView} from 'react-native';
+import {View} from 'react-native';
 import {Input} from '../components/Input.js';
-import {CustomButton} from '../components/CustomButton.js';
+import {LoginButton} from '../components/LoginButton.js';
+import {styles} from '../styles/styles.js';
 
 export const LoginPage = ({navigation}) => {
   const [inputs, setInputs] = useState({
@@ -25,11 +26,11 @@ export const LoginPage = ({navigation}) => {
       handleError('Please enter password', 'password');
       valid = false;
     } else if (inputs.password.length < 5) {
-      handleError('Password must be more than 5 symbols', 'password');
+      handleError('Enter more than 5 symbols', 'password');
       valid = false;
     }
 
-    navigation.navigate('MainPage');
+    valid && navigation.navigate('MainPage');
   };
 
   const handleOnChange = (text, input) => {
@@ -40,66 +41,31 @@ export const LoginPage = ({navigation}) => {
     setErrors(prevState => ({...prevState, [input]: errorMessage}));
   };
   return (
-    <SafeAreaView>
-      <ScrollView>
-        <Text style={{color: 'black', fontSize: 40, fontWeight: 'bold'}}>
-          Login Page
-        </Text>
-        <Text>Enter your email</Text>
-        <View>
-          <Input
-            iconName="email-outline"
-            label="Email"
-            placeholder="Enter your email"
-            onChangeText={text => handleOnChange(text, 'email')}
-            error={errors.email}
-            onFocus={() => handleError(null, 'email')}
-          />
-          <Input
-            iconName="lock-outline"
-            label="password"
-            placeholder="Enter your password"
-            password
-            onChangeText={text => handleOnChange(text, 'password')}
-            error={errors.password}
-            onFocus={() => handleError(null, 'password')}
-          />
-        </View>
-        <CustomButton title="Login" onPress={validate} />
-      </ScrollView>
-    </SafeAreaView>
+    <View style={[styles.container, styles.containerOut]}>
+      <View style={styles.container}>
+        <Input
+          iconName="email-outline"
+          label="Email"
+          placeholder="Enter your email"
+          onChangeText={text => handleOnChange(text, 'email')}
+          error={errors.email}
+          onFocus={() => handleError(null, 'email')}
+          style={styles.inputView}
+        />
+        <Input
+          iconName="lock-outline"
+          label="password"
+          placeholder="Enter your password"
+          password
+          onChangeText={text => handleOnChange(text, 'password')}
+          error={errors.password}
+          style={styles.inputView}
+          onFocus={() => handleError(null, 'password')}
+        />
+      </View>
+      {inputs.email && inputs.password && (
+        <LoginButton title="Login" onPress={validate} />
+      )}
+    </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%',
-  },
-
-  inputView: {
-    borderRadius: 30,
-    width: '70%',
-    height: 45,
-    backgroundColor: '#AAA5C8',
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-
-  TextInput: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  loginBtn: {
-    width: '80%',
-    borderRadius: 25,
-    height: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#8075BB',
-  },
-});

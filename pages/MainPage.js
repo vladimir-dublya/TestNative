@@ -1,32 +1,40 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, FlatList, Text} from 'react-native';
-import {Header} from 'react-native-elements';
+import {
+  View,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {Loader} from '../components/Loader.js';
 import Snackbar from 'react-native-snackbar';
-import {CustomButton} from '../components/CustomButton.js';
+import {LoginButton} from '../components/LoginButton.js';
+import {styles} from '../styles/styles.js';
 import Modal from 'react-native-modal';
 
 export const MainPage: React.FC = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingForComments, setIsLoadingForComments] = useState(true);
   const [data, setData] = useState([]);
   const [comments, setComments] = useState([]);
   const [open, setOpen] = useState(false);
 
   const handleOpen = choosenId => {
     setOpen(true);
-    setIsLoading(true);
+    setIsLoadingForComments(true);
     const getCommentsFromApi = async () => {
       const response = await fetch(
         `https://jsonplaceholder.typicode.com/posts/${choosenId}/comments`,
       );
       const json = await response.json();
-      setIsLoading(false);
+      setIsLoadingForComments(false);
       setComments(json);
     };
 
     try {
       getCommentsFromApi();
     } catch (error) {
+      setOpen(false);
       Snackbar.show({
         text: 'Сталась помилка',
       });
@@ -36,7 +44,6 @@ export const MainPage: React.FC = ({navigation}) => {
   const handleLogin = () => {
     navigation.goBack();
   };
-
   const getArticlesFromApi = async () => {
     try {
       const response = await fetch(
@@ -64,32 +71,31 @@ export const MainPage: React.FC = ({navigation}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <LoginButton title="Log Out" onPress={handleLogin} />,
+    });
+  });
+
   return (
     <View>
       {isLoading ? (
         <Loader />
       ) : (
         <View>
-          <Header
-            placement="left"
-            rightComponent={
-              <CustomButton title="Log Out" onPress={handleLogin} />
-            }
-          />
           <View>
             <FlatList
               data={data}
               renderItem={({item}) => {
                 return (
                   <View style={styles.containerItemList}>
-                    <Text
-                      style={styles.listItem}
+                    <TouchableOpacity
                       onPress={() => {
                         handleOpen(item.id);
                       }}>
-                      {item.title}
-                    </Text>
-                    <Text>{item.body}</Text>
+                      <Text style={styles.listItem}>{item.title}</Text>
+                      <Text>{item.body}</Text>
+                    </TouchableOpacity>
                   </View>
                 );
               }}
@@ -99,44 +105,34 @@ export const MainPage: React.FC = ({navigation}) => {
       )}
       <Modal
         visible={open}
-        style={{width: '100%', height: '100%', backgroundColor: 'blue'}}
         onRequestClose={() => {
           setOpen(false);
         }}>
-        <View>
-          {isLoading ? (
-            <Loader />
-          ) : (
-            <FlatList
-              data={comments}
-              renderItem={comment => {
-                console.log(comment.item.body);
-                return (
-                  <View>
-                    <Text>{comment.item.email}</Text>
-                    <Text>{comment.item.body}</Text>
-                  </View>
-                );
-              }}
-            />
-          )}
-        </View>
+        <TouchableOpacity onPress={() => setOpen(false)} activeOpacity={1}>
+          <TouchableWithoutFeedback>
+            <View style={styles.container}>
+              <View style={styles.modalContainer}>
+                {isLoadingForComments ? (
+                  <Loader />
+                ) : (
+                  <FlatList
+                    data={comments}
+                    renderItem={comment => {
+                      console.log(comment.item.body);
+                      return (
+                        <View>
+                          <Text>{comment.item.email}</Text>
+                          <Text>{comment.item.body}</Text>
+                        </View>
+                      );
+                    }}
+                  />
+                )}
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </TouchableOpacity>
       </Modal>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  listItem: {
-    fontSize: 20,
-    backgroundColor: 'green',
-  },
-
-  containerItemList: {
-    height: 120,
-    marginBottom: 30,
-    borderColor: 'black',
-    borderRadius: 2,
-    borderWidth: 1,
-  },
-});
