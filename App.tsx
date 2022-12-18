@@ -1,7 +1,7 @@
 import React from 'react';
 import type {Node} from 'react';
-import {LoginPage} from './pages/LoginPage.js';
-import {MainPage} from './pages/MainPage.js';
+import {LoginPage} from './pages/LoginPage.tsx';
+import {MainPage} from './pages/MainPage.tsx';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';

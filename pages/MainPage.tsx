@@ -6,13 +6,13 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {Loader} from '../components/Loader.js';
+import {Loader} from '../components/Loader.tsx';
 import Snackbar from 'react-native-snackbar';
-import {LoginButton} from '../components/LoginButton.js';
+import {LoginButton} from '../components/LoginButton.tsx';
 import {styles} from '../styles/styles.js';
 import Modal from 'react-native-modal';
 import NetInfo from '@react-native-community/netinfo';
-import {Data, Comments} from '../types/mainPage.ts';
+import {Dirs, FileSystem} from 'react-native-file-access';
 
 export const MainPage: React.FC = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -20,7 +20,7 @@ export const MainPage: React.FC = ({navigation}) => {
   const [data, setData] = useState([]);
   const [comments, setComments] = useState([]);
   const [open, setOpen] = useState(false);
-  const [isConnected, setIsConnected] = useState(true);
+  const [isConnected, setIsConnected] = useState(false);
 
   NetInfo.fetch().then(state => {
     setIsConnected(state.isConnected);
@@ -57,9 +57,19 @@ export const MainPage: React.FC = ({navigation}) => {
         'https://jsonplaceholder.typicode.com/posts/',
       );
       const json = await response.json();
+      await FileSystem.writeFile(
+        Dirs.CacheDir + 'savedData.txt',
+        JSON.stringify(json),
+      );
       setIsLoading(false);
       setData(json);
-    } catch {
+    } catch (error) {
+      if (!isConnected) {
+        const text = await FileSystem.readFile(Dirs.CacheDir + 'savedData.txt');
+        console.log(text);
+        setIsLoading(false);
+        setData(JSON.parse(text));
+      }
       Snackbar.show({
         text: 'Сталась помилка',
         action: {

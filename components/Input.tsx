@@ -2,11 +2,17 @@ import React from 'react';
 import {View, Text, TextInput} from 'react-native';
 import {styles} from '../styles/styles.js';
 
-export const Input = ({
+type Props = {
+  label: string;
+  error: string;
+  onFocus: () => void;
+  onChangeText: (string) => void;
+  placeholder: string;
+};
+
+export const Input: React.FC<Props> = ({
   label,
-  iconName,
   error,
-  password,
   onFocus = () => {},
   ...props
 }) => {

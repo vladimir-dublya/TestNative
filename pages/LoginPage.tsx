@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {View} from 'react-native';
-import {Input} from '../components/Input.js';
-import {LoginButton} from '../components/LoginButton.js';
+import {Input} from '../components/Input.tsx';
+import {LoginButton} from '../components/LoginButton.tsx';
 import {styles} from '../styles/styles.js';
 
 export const LoginPage = ({navigation}) => {
@@ -44,7 +44,6 @@ export const LoginPage = ({navigation}) => {
     <View style={[styles.container, styles.containerOut]}>
       <View style={styles.container}>
         <Input
-          iconName="email-outline"
           label="Email"
           placeholder="Enter your email"
           onChangeText={text => handleOnChange(text, 'email')}
@@ -53,10 +52,8 @@ export const LoginPage = ({navigation}) => {
           style={styles.inputView}
         />
         <Input
-          iconName="lock-outline"
           label="password"
           placeholder="Enter your password"
-          password
           onChangeText={text => handleOnChange(text, 'password')}
           error={errors.password}
           style={styles.inputView}
