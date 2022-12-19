@@ -9,9 +9,9 @@ NPM v6.14.15
 
 ## How to run a project
 
-npm i
-npx react-native start
-npm run android
+* npm i
+* npx react-native start
+* npm run android
 
 ## How to login
 
