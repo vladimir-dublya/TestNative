@@ -1,10 +1,23 @@
 import React from 'react';
-import type {Node} from 'react';
-import {LoginPage} from './pages/LoginPage.tsx';
-import {MainPage} from './pages/MainPage.tsx';
+import type { Node } from 'react';
+import {LoginPage} from './pages/LoginPage';
+import {MainPage} from './pages/MainPage';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+
+
+type RootStackParamList = {
+  LoginPage: undefined;
+  MainPage: {
+    title: string,
+    headerStyle: {
+      backgroundColor: string,
+    },
+  };
+};
+
+type Props = NativeStackScreenProps<RootStackParamList, 'LoginPage'>;
 
 const Stack = createNativeStackNavigator();
 

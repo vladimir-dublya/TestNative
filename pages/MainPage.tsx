@@ -6,19 +6,34 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {Loader} from '../components/Loader.tsx';
+import {Loader} from '../components/Loader';
 import Snackbar from 'react-native-snackbar';
-import {LoginButton} from '../components/LoginButton.tsx';
+import {LoginButton} from '../components/LoginButton';
 import {styles} from '../styles/styles.js';
 import Modal from 'react-native-modal';
 import NetInfo from '@react-native-community/netinfo';
 import {Dirs, FileSystem} from 'react-native-file-access';
 
+type Comment = {
+  postId: number;
+  id: number;
+  name: string;
+  email: string;
+  body: string;
+};
+
+type Data = {
+  userId: number;
+  id: number;
+  title: string;
+  body: string;
+};
+
 export const MainPage: React.FC = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingForComments, setIsLoadingForComments] = useState(true);
-  const [data, setData] = useState([]);
-  const [comments, setComments] = useState([]);
+  const [data, setData] = useState<Data[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [open, setOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
 
@@ -66,7 +81,6 @@ export const MainPage: React.FC = ({navigation}) => {
     } catch (error) {
       if (!isConnected) {
         const text = await FileSystem.readFile(Dirs.CacheDir + 'savedData.txt');
-        console.log(text);
         setIsLoading(false);
         setData(JSON.parse(text));
       }
@@ -85,7 +99,6 @@ export const MainPage: React.FC = ({navigation}) => {
 
   useEffect(() => {
     getArticlesFromApi();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useLayoutEffect(() => {
@@ -138,7 +151,6 @@ export const MainPage: React.FC = ({navigation}) => {
                   <FlatList
                     data={comments}
                     renderItem={comment => {
-                      console.log(comment.item.body);
                       return (
                         <View>
                           <Text>{comment.item.email}</Text>

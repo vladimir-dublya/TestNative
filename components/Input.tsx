@@ -6,14 +6,17 @@ type Props = {
   label: string;
   error: string;
   onFocus: () => void;
-  onChangeText: (string) => void;
+  onChangeText: (arg0: string) => void;
   placeholder: string;
 };
+
+// let temp: string;
+// temp = 1;
 
 export const Input: React.FC<Props> = ({
   label,
   error,
-  onFocus = () => {},
+  onFocus,
   ...props
 }) => {
   return (

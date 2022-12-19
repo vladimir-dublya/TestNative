@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
-import {View} from 'react-native';
-import {Input} from '../components/Input.tsx';
-import {LoginButton} from '../components/LoginButton.tsx';
-import {styles} from '../styles/styles.js';
+import React, { useState } from 'react';
+import { View } from 'react-native';
+import { Input } from '../components/Input';
+import { LoginButton } from '../components/LoginButton';
+import { styles } from '../styles/styles.js';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-export const LoginPage = ({navigation}) => {
+export const LoginPage: React.FC = ({navigation}) => {
   const [inputs, setInputs] = useState({
     email: '',
     password: '',
@@ -33,11 +34,11 @@ export const LoginPage = ({navigation}) => {
     valid && navigation.navigate('MainPage');
   };
 
-  const handleOnChange = (text, input) => {
+  const handleOnChange = (text: string, input: string) => {
     setInputs(prevState => ({...prevState, [input]: text}));
   };
 
-  const handleError = (errorMessage, input) => {
+  const handleError = (errorMessage: string | null, input: string) => {
     setErrors(prevState => ({...prevState, [input]: errorMessage}));
   };
   return (
